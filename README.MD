@@ -91,18 +91,38 @@ La simulación genera diferentes patrones según la relación de frecuencias:
 ## 📁 Estructura del Proyecto
 
 ```
-simulacion-crt/
-├── src/
-│   ├── main.[ext]           # Archivo principal
-│   ├── physics/             # Cálculos físicos
-│   ├── graphics/            # Visualización
-│   └── controls/            # Interfaz de usuario
-├── docs/
-│   ├── informe.pdf          # Informe completo
-│   └── presentation.mp4     # Video presentación
-├── assets/                  # Recursos gráficos
-├── README.md
-└── requirements.[txt/json]  # Dependencias
+## 📂 Estructura del Proyecto
+
+crt-simulacion/
+│── README.md # Descripción general del proyecto
+│── requirements.txt # Librerías necesarias
+│── main.py # Punto de entrada del programa
+│
+├── crt/ # Lógica física del CRT
+│ ├── electron.py # Clase Electron: trayectoria bajo campos eléctricos
+│ ├── placas.py # Clases de placas deflectoras
+│ ├── tubo.py # Clase CRT: integra electrones, placas y pantalla
+│ ├── fisica.py # Ecuaciones físicas (fuerza, aceleración, movimiento)
+│ └── señales.py # Generación de señales sinusoidales
+│
+├── ui/ # Interfaz gráfica
+│ ├── ventana.py # Ventana principal
+│ ├── controles.py # Sliders y botones de usuario
+│ └── display.py # Renderización gráfica de vistas del CRT
+│
+├── utils/ # Utilidades y helpers
+│ ├── constantes.py # Constantes físicas (masa electrón, dimensiones, etc.)
+│ ├── helpers.py # Funciones auxiliares
+│ └── graficos.py # Graficación de curvas y figuras de Lissajous
+│
+├── tests/ # Pruebas unitarias
+│ ├── test_fisica.py # Pruebas de ecuaciones físicas
+│ ├── test_tubo.py # Pruebas del CRT completo
+│ └── test_señales.py # Pruebas de señales
+│
+└── docs/ # Documentación
+├── informe.md # Informe final
+└── notas.md # Notas y bitácora de desarrollo
 ```
 
 ## 📖 Fundamentos Teóricos
