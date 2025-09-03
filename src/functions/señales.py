@@ -52,23 +52,3 @@ class SignalGenerator: #Generados de señales sinoidales individuales, compuesta
         _, y = self.sine(spec_y.frequency, spec_y.amplitude, spec_y.phase, spec_y.offset, fs, duration)
 
         return t, x, y #Vector de tiempo y señales x(t), y(t)
-    
-'''
-#Prueba de generación y graficado de Lissajous
-if _name_ == "_main_":
-    from src.utils.constantes import SignalDefaults, PI
-    import matplotlib.pyplot as plt
-
-    defaults = SignalDefaults(fs=1000, duration=1.0)
-    gen = SignalGenerator(defaults)
-    spec_x = SignalSpec(frequency=5, amplitude=1.0, phase=0.0)
-    spec_y = SignalSpec(frequency=3, amplitude=1.0, phase=PI/2)
-    t, x, y = gen.lissajous(spec_x, spec_y)
-
-    plt.plot(x, y)
-    plt.title("Prueba Lissajous")
-    plt.xlabel("X(t)")
-    plt.ylabel("Y(t)")
-    plt.grid(True)
-    plt.show()
-'''
