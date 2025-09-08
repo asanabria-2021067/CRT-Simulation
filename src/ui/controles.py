@@ -20,16 +20,40 @@ class Controles:
         }
 
         # Frame principal con diseño moderno
-        self.frame_principal = tk.Frame(root, bg="#1e2a3a", relief=tk.RAISED, bd=3)
-        self.frame_principal.pack(side=tk.RIGHT, fill=tk.Y, padx=15, pady=15)
+        container = tk.Frame(root, bg="#1e2a3a")
+        container.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=15, pady=15)
+
+        self.canvas = tk.Canvas(container, bg="#1e2a3a", highlightthickness=0)
+        self.scrollbar = tk.Scrollbar(container, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.scrollbar.pack(side="right", fill="y")
+
+        # Frame interno (donde van los controles)
+        self.inner_frame = tk.Frame(self.canvas, bg="#1e2a3a")
+        self.canvas_window = self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw")
+
+        # 🔹 Forzar que inner_frame siempre tenga el mismo ancho que el canvas
+        def resize_inner(event):
+            self.canvas.itemconfig(self.canvas_window, width=event.width)
+
+        self.canvas.bind("<Configure>", resize_inner)
+
+
+        # Ajustar región de scroll automáticamente
+        self.inner_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
         
         # Título con estilo
-        titulo = tk.Label(self.frame_principal, text="⚡ CONTROLES CRT ⚡", 
+        titulo = tk.Label(self.inner_frame, text="⚡ CONTROLES CRT ⚡", 
                          font=("Consolas", 16, "bold"), fg="#00ffff", bg="#1e2a3a")
         titulo.pack(pady=15)
         
         # Separador estilizado
-        sep1 = tk.Frame(self.frame_principal, height=3, bg="#00ffff")
+        sep1 = tk.Frame(self.inner_frame, height=3, bg="#00ffff")
         sep1.pack(fill=tk.X, padx=15, pady=8)
         
         self._crear_controles_basicos()
@@ -40,10 +64,10 @@ class Controles:
 
     def _crear_controles_basicos(self):
         """Crea controles básicos de voltajes con diseño mejorado"""
-        frame_basicos = tk.LabelFrame(self.frame_principal, text="⚡ VOLTAJES DE CONTROL", 
+        frame_basicos = tk.LabelFrame(self.inner_frame, text="⚡ VOLTAJES DE CONTROL", 
                                     fg="#ffff00", bg="#283848", font=("Consolas", 11, "bold"),
                                     bd=2, relief=tk.GROOVE)
-        frame_basicos.pack(fill=tk.X, padx=12, pady=8)
+        frame_basicos.pack(fill=tk.X, padx=12, pady=8, expand=True)
         
         # Voltaje de aceleración con indicador visual
         self._crear_slider_avanzado(frame_basicos, "🚀 Voltaje Aceleración (V)", 
@@ -59,10 +83,10 @@ class Controles:
 
     def _crear_modo_selector(self):
         """Crea selector de modo con diseño cyberpunk"""
-        frame_modo = tk.LabelFrame(self.frame_principal, text="🔄 MODO DE OPERACIÓN", 
+        frame_modo = tk.LabelFrame(self.inner_frame, text="🔄 MODO DE OPERACIÓN", 
                                  fg="#ff00ff", bg="#283848", font=("Consolas", 11, "bold"),
                                  bd=2, relief=tk.GROOVE)
-        frame_modo.pack(fill=tk.X, padx=12, pady=8)
+        frame_modo.pack(fill=tk.X, padx=12, pady=8, expand=True)
         
         # Botón de modo estilizado
         btn_frame = tk.Frame(frame_modo, bg="#283848")
@@ -78,10 +102,10 @@ class Controles:
 
     def _crear_controles_sinusoidales(self):
         """Crea controles para señales sinusoidales con presets mejorados"""
-        self.frame_sinusoidal = tk.LabelFrame(self.frame_principal, text="📊 SEÑALES SINUSOIDALES", 
+        self.frame_sinusoidal = tk.LabelFrame(self.inner_frame, text="📊 SEÑALES SINUSOIDALES", 
                                             fg="#00ffaa", bg="#283848", font=("Consolas", 11, "bold"),
                                             bd=2, relief=tk.GROOVE)
-        self.frame_sinusoidal.pack(fill=tk.X, padx=12, pady=8)
+        self.frame_sinusoidal.pack(fill=tk.X, padx=12, pady=8, expand=True)
         
         # Canal Vertical
         canal_v_frame = tk.LabelFrame(self.frame_sinusoidal, text="📈 CANAL VERTICAL (Y)", 
@@ -115,7 +139,7 @@ class Controles:
         """Crea presets basados en las figuras mostradas en la imagen"""
         frame_presets = tk.LabelFrame(self.frame_sinusoidal, text="🎯 PRESETS LISSAJOUS", 
                                     fg="#ff8800", bg="#3a4a5a", font=("Consolas", 9, "bold"))
-        frame_presets.pack(fill=tk.X, padx=5, pady=5)
+        frame_presets.pack(fill=tk.X, padx=5, pady=5, expand=True)
         
         # Fila 1:1 (frecuencias 1:1)
         fila_1_1 = tk.Frame(frame_presets, bg="#3a4a5a")
@@ -195,7 +219,7 @@ class Controles:
 
     def _crear_control_display(self):
         """Crea controles de display mejorados"""
-        frame_display = tk.LabelFrame(self.frame_principal, text="📺 CONFIGURACIÓN PANTALLA", 
+        frame_display = tk.LabelFrame(self.inner_frame, text="📺 CONFIGURACIÓN PANTALLA", 
                                     fg="#ff6600", bg="#283848", font=("Consolas", 11, "bold"),
                                     bd=2, relief=tk.GROOVE)
         frame_display.pack(fill=tk.X, padx=12, pady=8)
@@ -208,7 +232,7 @@ class Controles:
 
     def _crear_botones_accion(self):
         """Crea botones de acción con estilo futurista"""
-        frame_botones = tk.Frame(self.frame_principal, bg="#1e2a3a")
+        frame_botones = tk.Frame(self.inner_frame, bg="#1e2a3a")
         frame_botones.pack(fill=tk.X, padx=12, pady=10)
         
         # Botón limpiar pantalla
@@ -364,8 +388,8 @@ class Controles:
             amplitud_base = 400  # Aumentada para mejor visibilidad
             
             # Calcular voltajes sinusoidales
-            voltaje_v = amplitud_base * math.sin(2 * math.pi * freq_v * tiempo + fase_v)
-            voltaje_h = amplitud_base * math.sin(2 * math.pi * freq_h * tiempo + fase_h)
+            voltaje_v = amplitud_base * math.sin(2 * math.pi * freq_v * tiempo - fase_v)
+            voltaje_h = amplitud_base * math.sin(2 * math.pi * freq_h * tiempo - fase_h)
             
             return voltaje_v, voltaje_h
         else:
@@ -375,12 +399,12 @@ class Controles:
         """Retorna True si se debe limpiar la pantalla (implementar según necesidad)"""
         return False
         # Título
-        titulo = tk.Label(self.frame_principal, text="CONTROLES CRT", 
+        titulo = tk.Label(self.inner_frame, text="CONTROLES CRT", 
                          font=("Arial", 14, "bold"), fg="white", bg="#2c3e50")
         titulo.pack(pady=10)
         
         # Separador
-        sep1 = ttk.Separator(self.frame_principal, orient='horizontal')
+        sep1 = ttk.Separator(self.inner_frame, orient='horizontal')
         sep1.pack(fill=tk.X, padx=10, pady=5)
         
         self._crear_controles_basicos()
@@ -390,7 +414,7 @@ class Controles:
 
     def _crear_controles_basicos(self):
         """Crea controles básicos de voltajes"""
-        frame_basicos = tk.LabelFrame(self.frame_principal, text="Voltajes de Control", 
+        frame_basicos = tk.LabelFrame(self.inner_frame, text="Voltajes de Control", 
                                     fg="white", bg="#34495e", font=("Arial", 10, "bold"))
         frame_basicos.pack(fill=tk.X, padx=10, pady=5)
         
@@ -408,7 +432,7 @@ class Controles:
 
     def _crear_modo_selector(self):
         """Crea selector de modo manual/sinusoidal"""
-        frame_modo = tk.LabelFrame(self.frame_principal, text="Modo de Operación", 
+        frame_modo = tk.LabelFrame(self.inner_frame, text="Modo de Operación", 
                                  fg="white", bg="#34495e", font=("Arial", 10, "bold"))
         frame_modo.pack(fill=tk.X, padx=10, pady=5)
         
@@ -421,7 +445,7 @@ class Controles:
 
     def _crear_controles_sinusoidales(self):
         """Crea controles para señales sinusoidales"""
-        self.frame_sinusoidal = tk.LabelFrame(self.frame_principal, text="Señales Sinusoidales", 
+        self.frame_sinusoidal = tk.LabelFrame(self.inner_frame, text="Señales Sinusoidales", 
                                             fg="white", bg="#34495e", font=("Arial", 10, "bold"))
         self.frame_sinusoidal.pack(fill=tk.X, padx=10, pady=5)
         
@@ -477,7 +501,7 @@ class Controles:
 
     def _crear_control_persistencia(self):
         """Crea control de persistencia"""
-        frame_persistencia = tk.LabelFrame(self.frame_principal, text="Display", 
+        frame_persistencia = tk.LabelFrame(self.inner_frame, text="Display", 
                                          fg="white", bg="#34495e", font=("Arial", 10, "bold"))
         frame_persistencia.pack(fill=tk.X, padx=10, pady=5)
         

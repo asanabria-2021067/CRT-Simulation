@@ -56,7 +56,7 @@ class Display:
         
         # Pantalla CRT (más grande y realista)
         self.pantalla = {
-            'x': 650, 'y': 70, 'width': 320, 'height': 320,
+            'x': 650, 'y': 95, 'width': 320, 'height': 320,
             'titulo': '📺 PANTALLA CRT'
         }
         
@@ -284,7 +284,7 @@ class Display:
                                fill="#00ff00", width=6)
         self.canvas.create_line(pantalla_x-2, centro_y-38, pantalla_x-2, centro_y+38,
                                fill="#44ff44", width=2)
-        self.canvas.create_text(pantalla_x+15, centro_y+45, text="FÓSFORO", 
+        self.canvas.create_text(pantalla_x+5, centro_y+55, text="FÓSFORO", 
                                font=("Consolas", 8, "bold"), fill="#00ff00")
 
     def _dibujar_pantalla_avanzada(self):
@@ -695,7 +695,7 @@ class Display:
             centro_x = self.pantalla_activa['x'] + self.pantalla_activa['width'] // 2
             centro_y = self.pantalla_activa['y'] + self.pantalla_activa['height'] // 2
             
-            pos_x = centro_x + pixel_x
+            pos_x = centro_x - pixel_x
             pos_y = centro_y - pixel_y  # Invertir Y
             
             # Verificar límites
