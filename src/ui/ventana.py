@@ -1,3 +1,4 @@
+# ventana.py
 import tkinter as tk
 from tkinter import ttk
 import time
@@ -29,7 +30,25 @@ class Ventana:
         
         # Crear componentes principales
         self.display = Display(self.root)
-        self.controles = Controles(self.root)
+        
+        # Crear frame para controles con scroll
+        controles_frame = tk.Frame(self.root, bg="#1e2a3a")
+        controles_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=15, pady=15)
+        
+        canvas = tk.Canvas(controles_frame, bg="#1e2a3a", width=300)
+        scrollbar = tk.Scrollbar(controles_frame, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        scrollbar.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
+        
+        inner_frame = tk.Frame(canvas, bg="#1e2a3a")
+        canvas.create_window((0, 0), window=inner_frame, anchor="nw")
+        
+        self.controles = Controles(inner_frame)
+        
+        # Actualizar scrollregion después de que se carguen los widgets
+        inner_frame.bind("<Configure>", lambda event: canvas.configure(scrollregion=canvas.bbox("all")))
         
         # Conectar controles con display
         self._conectar_controles()
@@ -273,68 +292,29 @@ class Ventana:
             self.fps_label.config(text=f"FPS: {self.fps:.1f}", fg=color)
 
     def _actualizar_estado_avanzado(self, valores, tiempo_actual):
-        """Actualización detallada del estado"""
-        # Estado de simulación
+        """Actualiza el estado de la simulación"""
         if self.paused:
             self.status_sim.config(text="⏸ SIMULACIÓN PAUSADA", fg="#ffff00")
         else:
             self.status_sim.config(text="⚡ SIMULACIÓN ACTIVA", fg="#00ff00")
         
-        # Información de modo
-        if valores.get("modo_sinusoidal", False):
-            freq_v = valores.get("frecuencia_vertical", 1)
-            freq_h = valores.get("frecuencia_horizontal", 1)
-            fase_v = valores.get("fase_vertical", 0)
-            fase_h = valores.get("fase_horizontal", 0)
-            
-            # Identificar figura
-            figura = self._identificar_figura_lissajous(freq_v, freq_h, fase_v, fase_h)
-            
-            modo_text = f"🌊 LISSAJOUS: {figura} | {freq_v:.1f}:{freq_h:.1f} Hz"
-            self.modo_label.config(text=modo_text, fg="#ff00ff")
-        else:
-            volt_v = valores.get("voltaje_vertical", 0)
-            volt_h = valores.get("voltaje_horizontal", 0)
-            modo_text = f"🎛 MANUAL: V={volt_v:.0f}V, H={volt_h:.0f}V"
-            self.modo_label.config(text=modo_text, fg="#00ffff")
+        modo = "SINUSOIDAL" if valores["modo_sinusoidal"] else "MANUAL"
+        self.modo_label.config(text=f"MODO: {modo}")
         
-        # Velocidad de simulación
-        self.velocidad_label.config(text=f"Velocidad: {self.velocidad_simulacion:.1f}x")
+        self.velocidad_label.config(text=f"Velocidad: {self.velocidad_simulacion:.2f}x")
 
-    def _identificar_figura_lissajous(self, freq_v, freq_h, fase_v, fase_h):
-        """Identifica el tipo de figura de Lissajous"""
-        # Simplificar ratio
-        if abs(freq_v - freq_h) < 0.1:
-            diff_fase = abs(fase_v - fase_h) % 360
-            if diff_fase < 15 or abs(diff_fase - 180) < 15:
-                return "Línea"
-            elif abs(diff_fase - 90) < 15:
-                return "Círculo"
-            else:
-                return "Elipse"
-        elif abs(freq_v - 2*freq_h) < 0.1 or abs(2*freq_v - freq_h) < 0.1:
-            return "Figura 8"
-        elif abs(freq_v - 3*freq_h) < 0.1 or abs(3*freq_v - freq_h) < 0.1:
-            return "Trébol"
-        else:
-            return f"{freq_v:.1f}:{freq_h:.1f}"
-
-    # Métodos de control
     def _toggle_pause(self):
-        """Alterna pausa/reanudar"""
+        """Pausa o reanuda la simulación"""
         self.paused = not self.paused
-        if self.paused:
-            # Ajustar tiempo de inicio para mantener continuidad
-            self.tiempo_inicio = time.time() - (time.time() - self.tiempo_inicio)
 
     def _reiniciar_simulacion(self):
-        """Reinicia la simulación completamente"""
+        """Reinicia la simulación"""
         self.tiempo_inicio = time.time()
-        self.display.limpiar_pantalla()
         self.controles._reset_valores()
+        self.display.limpiar_pantalla()
 
     def _limpiar_pantalla(self):
-        """Limpia solo la pantalla"""
+        """Limpia la pantalla"""
         self.display.limpiar_pantalla()
 
     def _cambiar_velocidad(self, nueva_velocidad):
@@ -410,10 +390,9 @@ MANUAL DE USUARIO - SIMULADOR CRT
 
 6. ATAJOS DE TECLADO:
    • Espacio: Pausar/Reanudar
-   • R: Reiniciar simulación
+   • R: Reiniciar
    • C: Limpiar pantalla
    • H: Mostrar ayuda
-   • 1-5: Cambiar velocidad
    • ESC: Salir
 """
         
@@ -517,7 +496,7 @@ Curso: Laboratorio de Física 3
 CARACTERÍSTICAS:
    ✓ Simulación física realista del CRT
    ✓ Cálculos de trayectoria por tramos
-   ✓ Figuras de Lissajous completas
+   • Figuras de Lissajous completas
    ✓ Efectos visuales de persistencia
    ✓ Múltiples vistas del sistema
    ✓ Presets de configuración
