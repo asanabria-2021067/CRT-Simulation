@@ -143,11 +143,11 @@ class Controles:
         tk.Label(fila_1_2, text="1:2", fg="#ffffff", bg="#3a4a5a", font=("Consolas", 8, "bold")).pack(side=tk.LEFT)
         
         presets_1_2 = [
-            ("∩", lambda: self._aplicar_preset(2, 1, 0, 0)),
+            ("∩", lambda: self._aplicar_preset(2, 1, 90, 0)),
             ("∼", lambda: self._aplicar_preset(2, 1, 45, 0)),
-            ("∞", lambda: self._aplicar_preset(2, 1, 90, 0)),
+            ("∞", lambda: self._aplicar_preset(2, 1, 0, 0)),
             ("∼", lambda: self._aplicar_preset(2, 1, 135, 0)),
-            ("∪", lambda: self._aplicar_preset(2, 1, 180, 0))
+            ("∪", lambda: self._aplicar_preset(2, 1, 270, 0))
         ]
         
         for nombre, comando in presets_1_2:
@@ -181,11 +181,11 @@ class Controles:
         tk.Label(fila_2_3, text="2:3", fg="#ffffff", bg="#3a4a5a", font=("Consolas", 8, "bold")).pack(side=tk.LEFT)
         
         presets_2_3 = [
-            ("α", lambda: self._aplicar_preset(3, 2, 0, 0)),
-            ("∞", lambda: self._aplicar_preset(3, 2, 45, 0)),
-            ("✱", lambda: self._aplicar_preset(3, 2, 90, 0)),
-            ("∞", lambda: self._aplicar_preset(3, 2, 135, 0)),
-            ("α", lambda: self._aplicar_preset(3, 2, 180, 0))
+            ("α", lambda: self._aplicar_preset(3, 2, 45, 0)),
+            ("∞", lambda: self._aplicar_preset(3, 2, 0, 0)),
+            ("✱", lambda: self._aplicar_preset(3, 2, 135, 0)),
+            ("∞", lambda: self._aplicar_preset(3, 2, 90, 0)),
+            ("α", lambda: self._aplicar_preset(3, 2, 45, 0))
         ]
         
         for nombre, comando in presets_2_3:
@@ -331,10 +331,10 @@ class Controles:
             # Amplitud base para las figuras de Lissajous
             amplitud_base = 250
             
-            # CORRECCIÓN: usar sin para Y (vertical) y cos para X (horizontal)
+                # Usar sin() para ambos ejes para que los presets de Lissajous sean estándar
             voltaje_v = amplitud_base * math.sin(2 * math.pi * freq_v * tiempo + fase_v)
-            voltaje_h = amplitud_base * math.cos(2 * math.pi * freq_h * tiempo + fase_h)
-            
+            voltaje_h = amplitud_base * math.sin(2 * math.pi * freq_h * tiempo + fase_h)
+                
             return voltaje_v, voltaje_h
         else:
             return valores["voltaje_vertical"], valores["voltaje_horizontal"]
